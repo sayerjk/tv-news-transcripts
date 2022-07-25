@@ -38,7 +38,7 @@ def get_transcript(address: str) -> dict:
     return results
 
 
-def get_transcript_links(webpage: str) -> list:
+def get_transcript_links(webpage: str) -> list[str]:
     """Provides 100 most recent links to transcripts for a given CNN show"""
     index_contents = requests.get(webpage)
     index_soup = BeautifulSoup(index_contents.text, 'html.parser')
@@ -50,4 +50,18 @@ def get_transcript_links(webpage: str) -> list:
     return transcript_links
 
 
-#TODO - add function to retrieve all show's URLS
+def segment_links(url: str) -> list[str]:
+    """
+    Return links to all CNN segments with transcripts online from cnn.transcripts.com
+    Needs adaptation for other news websites.
+    """
+    content = requests.get(url)
+    soup = BeautifulSoup(content.text, 'html.parser')
+    show_links = []
+    for i in soup.find_all(name='a'):
+        if i.get('href'):
+            if i.get('href')[0:5] == '/show':
+                show_links.append((i.get('href'), i.text))
+
+    return show_links
+
