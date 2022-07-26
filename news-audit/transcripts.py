@@ -16,11 +16,14 @@ def get_transcript(address: str) -> dict:
     cnnBodyText = [attribute.text for attribute in cnnBodyText]
     date = cnnBodyText[0]
     mainBody = cnnBodyText[2]
-
     mainBody = TextBlob(mainBody)
-    positive_polarities = [(i.polarity, i) for i in mainBody.sentences if i.polarity > 0]
-    negative_polarities = [(i.polarity, i) for i in mainBody.sentences if i.polarity <= 0]
-    sentence_breakdown = [positive_polarities, negative_polarities]
+
+    positive_polarities = [(i.polarity, str(i)) for i in mainBody.sentences if i.polarity > 0]
+    negative_polarities = [(i.polarity, str(i)) for i in mainBody.sentences if i.polarity <= 0]
+    sentence_breakdown = [{
+        'positive_polarities': positive_polarities,
+        'negative_polarities': negative_polarities,
+    }]
     ratio = len(positive_polarities) / (len(positive_polarities) + len(negative_polarities))
 
     # TODO - engineer `common_phrases` field (NLTK bigrams and trigrams?)
@@ -29,16 +32,16 @@ def get_transcript(address: str) -> dict:
         'date': date,
         'polarity': mainBody.polarity,
         'subjectivity': mainBody.subjectivity,
-        # TODO - fix Sentence() datatype here
-        # 'sentence_breakdown': sentence_breakdown,
         'percent_over_zero': ratio,
-        'network': webpage
+        'network': webpage,
+        'transcript':str(mainBody),
+        'sentence_breakdown': sentence_breakdown,
     }
 
     return results
 
 
-def get_transcript_links(webpage: str) -> list[str]:
+def get_transcript_links(webpage: str, quantity: int) -> list[str]:
     """Provides 100 most recent links to transcripts for a given CNN show"""
     index_contents = requests.get(webpage)
     index_soup = BeautifulSoup(index_contents.text, 'html.parser')
@@ -47,7 +50,7 @@ def get_transcript_links(webpage: str) -> list[str]:
         if i.get('href'):
             if i.get('href')[0:5] == '/show':
                 transcript_links.append(i.get('href'))
-    return transcript_links
+    return transcript_links[:quantity]
 
 
 def segment_links(url: str) -> list[str]:
