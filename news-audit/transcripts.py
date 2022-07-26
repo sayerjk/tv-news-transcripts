@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 from textblob import TextBlob
+import json
+import pandas as pd
 
 
 def get_transcript(address: str) -> dict:
@@ -41,7 +43,7 @@ def get_transcript(address: str) -> dict:
     return results
 
 
-def get_transcript_links(webpage: str, quantity: int) -> list[str]:
+def get_transcript_links(webpage: str, quantity: int = None) -> list[str]:
     """Provides 100 most recent links to transcripts for a given CNN show"""
     index_contents = requests.get(webpage)
     index_soup = BeautifulSoup(index_contents.text, 'html.parser')
@@ -50,7 +52,7 @@ def get_transcript_links(webpage: str, quantity: int) -> list[str]:
         if i.get('href'):
             if i.get('href')[0:5] == '/show':
                 transcript_links.append(i.get('href'))
-    return transcript_links[:quantity]
+    return transcript_links if not quantity else transcript_links[:quantity]
 
 
 def segment_links(url: str) -> list[str]:
@@ -68,3 +70,9 @@ def segment_links(url: str) -> list[str]:
 
     return show_links
 
+
+def create_jsons(batch: list[dict]) -> str:
+    for i, doc in enumerate(batch):
+        with open(f'data/acd/acd_0{i}.json', "w") as fp:
+            json.dump(doc, fp)
+    return ".json files saved locally to data/acd/acd_0{i}.json"
