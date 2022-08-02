@@ -29,6 +29,7 @@ def get_transcript(address: str) -> dict:
     ratio = len(positive_polarities) / (len(positive_polarities) + len(negative_polarities))
 
     # TODO - engineer `common_phrases` field (NLTK bigrams and trigrams?)
+    # TODO - chagne `percent_over_zero` to `percent_negative`
     results = {
         'title': title,
         'date': date,
@@ -55,7 +56,7 @@ def get_transcript_links(webpage: str, quantity: int = None) -> list[str]:
     return transcript_links if not quantity else transcript_links[:quantity]
 
 
-def segment_links(url: str) -> list[str]:
+def segment_links(url: str) -> list[tuple]:
     """
     Return links to all CNN segments with transcripts online from cnn.transcripts.com
     Needs adaptation for other news websites.
@@ -75,4 +76,5 @@ def create_jsons(batch: list[dict]) -> str:
     for i, doc in enumerate(batch):
         with open(f'data/acd/acd_0{i}.json', "w") as fp:
             json.dump(doc, fp)
+
     return ".json files saved locally to data/acd/acd_0{i}.json"

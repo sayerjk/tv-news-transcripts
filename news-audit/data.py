@@ -7,7 +7,7 @@ route = getenv("MONGO_PATH")
 client = MongoClient(route)
 
 
-def send_to_mongo(database_name:str, collection: str, data: dict) -> str:
+def send_to_mongo(database_name: str, collection: str, data: dict) -> str:
     """Sends one document to a given collection in MongoDB"""
     db = client[database_name]
     col = db[collection]
@@ -17,3 +17,11 @@ def send_to_mongo(database_name:str, collection: str, data: dict) -> str:
     print(mongo_object_id.inserted_id)
 
     return "Document added to MongoDB."
+
+
+def search_documents(database_name: str, collection: str, data: dict = None) -> list:
+    """Returns all documents matching search query `data`"""
+    db = client[database_name]
+    col = db[collection]
+    for item in col.find(data):
+        print(item)
