@@ -29,7 +29,7 @@ def get_transcript(address: str) -> dict:
     ratio = len(positive_polarities) / (len(positive_polarities) + len(negative_polarities))
 
     # TODO - engineer `common_phrases` field (NLTK bigrams and trigrams?)
-    # TODO - chagne `percent_over_zero` to `percent_negative`
+    # TODO - change `percent_over_zero` to `percent_negative`
     results = {
         'title': title,
         'date': date,
@@ -51,7 +51,7 @@ def get_transcript_links(webpage: str, quantity: int = None) -> list[str]:
     transcript_links = []
     for i in index_soup.find_all(name='a'):
         if i.get('href'):
-            if i.get('href')[0:5] == '/show':
+            if i.get('href')[0:2] == '/show':
                 transcript_links.append(i.get('href'))
     return transcript_links if not quantity else transcript_links[:quantity]
 

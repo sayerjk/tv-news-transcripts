@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from os import getenv
 from dotenv import load_dotenv
+from itertools import chain
 
 load_dotenv()
 route = getenv("MONGO_PATH")
@@ -20,8 +21,14 @@ def send_to_mongo(database_name: str, collection: str, data: dict) -> str:
 
 
 def search_documents(database_name: str, collection: str, data: dict = None) -> list:
-    """Returns all documents matching search query `data`"""
+    """Returns all documents matching search query `data`
+    :rtype: object
+    """
     db = client[database_name]
     col = db[collection]
-    for item in col.find(data):
-        print(item)
+    cursor = col.find(data)
+    return list(cursor)
+
+
+def dict_union(*args):
+    return dict(chain.from_iterable(d.items() for d in args))
