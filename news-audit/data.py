@@ -26,7 +26,7 @@ def search_documents(database_name: str, collection: str, data: dict = None) -> 
     """
     db = client[database_name]
     col = db[collection]
-    cursor = col.find(data)
+    cursor = col.find(data, projection= {"transcript": False, "sentence_breakdown": False})
     return list(cursor)
 
 
